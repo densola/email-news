@@ -10,16 +10,16 @@
 
 Assuming that the program was merely cloned, we would need to...
 
-1. Set up a [sqlite](https://www.sqlite.org/index.html) database
+1. Set up a local database file
 2. Set up the .env
 3. Install [go](https://go.dev/doc/install)
 4. Generate a [templ](https://templ.guide/quick-start/installation) template
 
 ### Set up: Database
 
-Install and set up sqlite from https://www.sqlite.org/index.html. After setting up sqlite, add a `db.db` file inside the repo's root. This database should have a table based on the following query:
-
-`CREATE TABLE "NEWS" ( "ID" INTEGER NOT NULL UNIQUE, "NEWS" BLOB NOT NULL UNIQUE, "TIME" INTEGER NOT NULL UNIQUE, PRIMARY KEY("ID" AUTOINCREMENT) )`
+1. Download the `emne.db` file from https://densola.github.io/files/
+2. Add it into in this repo's root
+3. Rename it to `db.db`
 
 ### Set up: .env
 
