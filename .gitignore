@@ -1,0 +1,9 @@
+bin/
+db/
+.vscode
+
+.env
+*.db
+*_templ.go
+__debug_*
+email-news

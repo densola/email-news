@@ -1,0 +1,198 @@
+// tplpages.templ contains components used for rendering entire pages.
+package main
+
+import (
+	"email-news/server"
+	"fmt"
+)
+
+templ HomePage(links []server.Hyperlink) {
+	<!DOCTYPE html>
+	<html lang="en">
+		@Header("Home")
+		<body>
+			@TopNav()
+			<h1>News!</h1>
+			<ul>
+				for _, link := range links {
+					<li><a href={ templ.SafeURL(link.Destination) }>{ link.Text }</a></li>
+				}
+			</ul>
+			@BottomNav()
+		</body>
+	</html>
+}
+
+templ NewsOnDatePage(news server.News, MBArticles []templ.Component, year, month, day string) {
+	<!DOCTYPE html>
+	<html lang="en">
+		@Header(fmt.Sprintf("News for %s %s, %s", month, day, year))
+		<body>
+			@TopNav()
+			<h1>News for { month } { day }, { year }</h1>
+			<h3>HackerNews</h3>
+			<p>Limit your content. Stop endlessly scrolling on Hacker News please.</p>
+			<ul>
+				if len(news.HNThreads.Items) < 1 {
+					<li>Sorry! No news for today...</li>
+				} else {
+					for _, thread := range news.HNThreads.Items {
+						<li>
+							<a href={ templ.SafeURL(thread.Link) }>{ thread.Title }</a> | <a href={ templ.SafeURL(thread.Comments) }>comments</a>
+						</li>
+					}
+				}
+			</ul>
+			<h3>TLDR Tech</h3>
+			<p>General tech articles</p>
+			<ul>
+				if len(news.TLDRTechArticles) < 1 {
+					<li>Sorry! No news for today...</li>
+				} else {
+					for _, page := range news.TLDRTechArticles {
+						<li>
+							<a href={ templ.SafeURL(page.Link) }>{ page.Title }</a>
+							<ul><li>{ page.Overview }</li></ul>
+						</li>
+					}
+				}
+			</ul>
+			<h3>TLDR WebDev</h3>
+			<p>Articles related to web development</p>
+			<ul>
+				if len(news.TLDRWebDevArticles) < 1 {
+					<li>Sorry! No news for today...</li>
+				} else {
+					for _, page := range news.TLDRWebDevArticles {
+						<li>
+							<a href={ templ.SafeURL(page.Link) }>{ page.Title }</a>
+							<ul><li>{ page.Overview }</li></ul>
+						</li>
+					}
+				}
+			</ul>
+			<h3>Morning Brew</h3>
+			<p>Ensures you're somewhat caught up with reality!</p>
+			<ul>
+				if len(news.MBArticles) < 1 {
+					<li>Sorry! No news for today...</li>
+				} else {
+					for i, page := range news.MBArticles {
+						<li>
+							{ page.Title }
+							<ul>
+								@MBArticles[i]
+							</ul>
+						</li>
+					}
+				}
+			</ul>
+			@BottomNav()
+		</body>
+	</html>
+}
+
+templ NewsEmail(news server.News, MBArticles []templ.Component, year, month, day string) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<style>
+				body {
+					background-color: #271052;
+					color: #e6dfd5;
+					font-family: Verdana, Geneva, Tahoma, sans-serif;
+				}
+
+				a {
+					color: #e6accd;
+				}
+
+				h1 {
+					font-weight: normal;
+				}
+
+
+				hgroup {
+					color: #e6accd;
+					display: flex;
+					flex-direction: column;
+				}
+
+				hgroup>h1 {
+					font-weight: bold;
+				}
+
+				hgroup>* {
+					margin: 0px;
+					padding: 0px;
+				}
+
+				li {
+					margin: .3rem;
+				}
+
+				.heading {
+					margin: 0px;
+					padding: 1.5rem 0px;
+					font-style: italic;
+				}
+
+				.hn__item {
+					color: #e6dfd5;
+					text-decoration: none;
+				}
+
+				.hn__comment {
+					font-size: .75rem;
+					text-decoration: none;
+				}
+
+				.tldr-tech__page {
+					text-decoration: none;
+				}
+			</style>
+		</head>
+		<body>
+			<h1 class="heading">Good morning!</h1>
+			<article class="hn">
+				<hgroup>
+					<p>Today's</p>
+					<h1>HN Threads</h1>
+				</hgroup>
+				<ul>
+					if len(news.HNThreads.Items) <  1 {
+						<li>Sorry! There was an error obtaining today's threads.</li>
+					} else {
+						for _, item := range news.HNThreads.Items {
+							<li>
+								<a class="hn__item" href={ templ.SafeURL(item.Link) }>
+									{ item.Title }
+								</a> 
+								<a class="hn__comment" href={ templ.SafeURL(item.Comments) }>(comments)</a>
+							</li>
+						}
+					}
+				</ul>
+			</article>
+			<article class="tldr-tech">
+				<hgroup>
+					<p>News from</p>
+					<h1>TLDR Tech</h1>
+				</hgroup>
+				<ul>
+					if len(news.TLDRTechArticles) < 1 {
+						<li>Sorry! No news for today...</li>
+					} else {
+						for _, page := range news.TLDRTechArticles {
+							<li>
+								<a class="tldr-tech__page" href={ templ.SafeURL(page.Link) }>{ page.Title }</a>
+								<ul><li>{ page.Overview }</li></ul>
+							</li>
+						}
+					}
+				</ul>
+				<p>Also, check out the TLDR WebDev <a href={ templ.SafeURL(news.TLDRWebDevLink) }>Newsletter</a> and Morning Brew's <a href="https://www.morningbrew.com/daily/issues/latest">latest</a>.</p>
+			</article>
+		</body>
+	</html>
+}

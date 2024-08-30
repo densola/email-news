@@ -1,0 +1,13 @@
+[Unit]
+Description=Email News
+
+[Service]
+ExecStart=/usr/local/bin/email-news
+EnvironmentFile=/usr/local/etc/emne.env
+KillMode=process
+Restart=on-failure
+RestartSec=5s
+WorkingDirectory=/var/lib/emne/
+
+[Install]
+WantedBy=multi-user.target

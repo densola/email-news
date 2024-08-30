@@ -1,0 +1,55 @@
+- name: Open emne port in ufw
+  ufw:
+      rule: allow
+      port: # TODO
+
+- name: Create emne group
+  group:
+      name: emne
+      state: present
+
+- name: Create emne user
+  user:
+      name: emne
+      groups: emne
+      shell: /sbin/nologin
+      append: true
+      state: present
+      create_home: false
+
+- name: Copy new binary to server
+  copy:
+      src: email-news
+      dest: /usr/local/bin
+      mode: 0755
+      owner: emne
+      group: emne
+  notify:
+      - Start emne
+
+- name: Copy systemd service file to server
+  copy:
+      src: emne.service # TODO - explain contents
+      dest: /lib/systemd/system
+      owner: root
+      group: root
+  notify:
+      - Start emne
+
+- name: Copy emne config file to server
+  copy:
+      src: .env # TODO - use actual templates
+      dest: /usr/local/etc/emne.env
+      owner: emne
+      group: emne
+  notify:
+      - Start emne
+
+- name: Copy emne db file to server
+  copy:
+      src: db.db
+      dest: /var/lib/emne/db.db
+      owner: emne
+      group: emne
+  notify:
+      - Start emne

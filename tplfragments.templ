@@ -1,0 +1,18 @@
+// tplfragments.templ contains components not meant to render entire pages.
+package main
+
+templ Header(pageTitle string) {
+	<head>
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>{ pageTitle }</title>
+	</head>
+}
+
+templ TopNav() {
+	<center><a id="topmost" href="/">Home</a></center>
+}
+
+templ BottomNav() {
+	<a href="#topmost">Back to top</a>
+}
