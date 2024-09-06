@@ -1,4 +1,7 @@
-package server
+/*
+news.go contains news-related operations.
+*/
+package apis
 
 import (
 	"encoding/xml"

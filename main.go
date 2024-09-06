@@ -1,18 +1,18 @@
 package main
 
 import (
-	"email-news/server"
+	"email-news/apis"
 	"fmt"
 	"log/slog"
 	"net/http"
 )
 
-var emne server.EmailNews
+var emne apis.EmailNews
 
 func main() {
 	var err error
 
-	emne, err = server.Init()
+	emne, err = apis.Init()
 	if err != nil {
 		panic("Could not initialize.")
 	}

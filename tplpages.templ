@@ -2,11 +2,11 @@
 package main
 
 import (
-	"email-news/server"
+	"email-news/apis"
 	"fmt"
 )
 
-templ HomePage(links []server.Hyperlink) {
+templ HomePage(links []apis.Hyperlink) {
 	<!DOCTYPE html>
 	<html lang="en">
 		@Header("Home")
@@ -23,7 +23,7 @@ templ HomePage(links []server.Hyperlink) {
 	</html>
 }
 
-templ NewsOnDatePage(news server.News, MBArticles []templ.Component, year, month, day string) {
+templ NewsOnDatePage(news apis.News, MBArticles []templ.Component, year, month, day string) {
 	<!DOCTYPE html>
 	<html lang="en">
 		@Header(fmt.Sprintf("News for %s %s, %s", month, day, year))
@@ -92,7 +92,7 @@ templ NewsOnDatePage(news server.News, MBArticles []templ.Component, year, month
 	</html>
 }
 
-templ NewsEmail(news server.News, MBArticles []templ.Component, year, month, day string) {
+templ NewsEmail(news apis.News, MBArticles []templ.Component, year, month, day string) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>

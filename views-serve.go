@@ -3,7 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
-	"email-news/server"
+	"email-news/apis"
 	"fmt"
 	"io"
 	"log/slog"
@@ -65,7 +65,7 @@ func serveDateNews(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func formatMB(n server.News) ([]templ.Component, error) {
+func formatMB(n apis.News) ([]templ.Component, error) {
 	fmb := []templ.Component{}
 
 	for i := 0; i < len(n.MBArticles); i++ {
