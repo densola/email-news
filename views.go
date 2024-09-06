@@ -7,7 +7,7 @@ import (
 	"text/template"
 	"time"
 
-	"email-news/server"
+	"email-news/apis"
 
 	"github.com/a-h/templ"
 	"github.com/go-co-op/gocron"
@@ -22,26 +22,26 @@ func scheduleScrape() {
 }
 
 func scrape() {
-	var n server.News
+	var n apis.News
 
-	dateString := server.GetDateNowString()
+	dateString := apis.GetDateNowString()
 
-	n, err := server.GetHNContent(n)
+	n, err := apis.GetHNContent(n)
 	if err != nil {
 		slog.Warn("Getting hacker news content", "error", err.Error())
 	}
 
-	n, err = server.GetTLDRContent(n, server.Tech, dateString)
+	n, err = apis.GetTLDRContent(n, apis.Tech, dateString)
 	if err != nil {
 		slog.Warn("Getting tldr tech content", "error", err.Error())
 	}
 
-	n, err = server.GetTLDRContent(n, server.WebDev, dateString)
+	n, err = apis.GetTLDRContent(n, apis.WebDev, dateString)
 	if err != nil {
 		slog.Warn("Getting tldr webdev content", "error", err.Error())
 	}
 
-	n, err = server.GetMBContent(n)
+	n, err = apis.GetMBContent(n)
 	if err != nil {
 		slog.Warn("Getting morning brew content", "error", err.Error())
 	}
@@ -54,7 +54,7 @@ func scrape() {
 	processEmail(n, dateString[0:3], dateString[5:6], dateString[8:9])
 }
 
-func processEmail(n server.News, year, month, day string) {
+func processEmail(n apis.News, year, month, day string) {
 	parser := template.Must(template.New("").Parse(`{{ . }}`))
 
 	formattedMB, err := formatMB(n)

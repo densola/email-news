@@ -1,4 +1,7 @@
-package server
+/*
+model.go contains database-related operations.
+*/
+package apis
 
 import (
 	"fmt"

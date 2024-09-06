@@ -1,4 +1,7 @@
-package server
+/*
+adapter.go handles calls from the view before passing them into the model.
+*/
+package apis
 
 import (
 	"encoding/json"
@@ -16,7 +19,6 @@ import (
 type EmailNews struct {
 	model  Model
 	Config config
-	News   News
 }
 
 type config struct {
@@ -137,25 +139,4 @@ func (na EmailNews) GetHomeLinks() ([]Hyperlink, error) {
 	}
 
 	return links, nil
-}
-
-// getDateNowString returns today's date in the format of YYYY-MM-DD.
-func GetDateNowString() string {
-	y, m, d := time.Now().Date()
-
-	currentDate := fmt.Sprintf("%d-", y)
-
-	if m < 10 {
-		currentDate += fmt.Sprintf("0%d-", m)
-	} else {
-		currentDate += fmt.Sprintf("%d-", m)
-	}
-
-	if d < 10 {
-		currentDate += fmt.Sprintf("0%d", d)
-	} else {
-		currentDate += fmt.Sprintf("%d", d)
-	}
-
-	return currentDate
 }
