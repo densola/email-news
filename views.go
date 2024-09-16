@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"log/slog"
+	"strconv"
 	"text/template"
 	"time"
 
@@ -24,19 +25,23 @@ func scheduleScrape() {
 func scrape() {
 	var n apis.News
 
-	dateString := apis.GetDateNowString()
+	date := apis.GetDateNowString()
+	dbDate, err := strconv.Atoi(date)
+	if err != nil {
+		slog.Warn("Converting date string to int", "err", err.Error())
+	}
 
-	n, err := apis.GetHNContent(n)
+	n, err = apis.GetHNContent(n)
 	if err != nil {
 		slog.Warn("Getting hacker news content", "error", err.Error())
 	}
 
-	n, err = apis.GetTLDRContent(n, apis.Tech, dateString)
+	n, err = apis.GetTLDRContent(n, apis.Tech, date)
 	if err != nil {
 		slog.Warn("Getting tldr tech content", "error", err.Error())
 	}
 
-	n, err = apis.GetTLDRContent(n, apis.WebDev, dateString)
+	n, err = apis.GetTLDRContent(n, apis.WebDev, date)
 	if err != nil {
 		slog.Warn("Getting tldr webdev content", "error", err.Error())
 	}
@@ -46,7 +51,7 @@ func scrape() {
 		slog.Warn("Getting morning brew content", "error", err.Error())
 	}
 
-	err = emne.StoreNews(n)
+	err = emne.StoreNews(n, dbDate)
 	if err != nil {
 		slog.Warn("Storing news", "err", err.Error())
 	}
@@ -59,7 +64,7 @@ func scrape() {
 		return
 	}
 
-	component := NewsEmail(n, formattedMB, dateString[0:3], dateString[5:6], dateString[8:9]) // TODO - actually use YMD in the template.
+	component := NewsEmail(n, formattedMB, date[0:4], date[4:6], date[6:8]) // TODO - actually use YMD in the template.
 
 	html, err := templ.ToGoHTML(context.Background(), component)
 	if err != nil {

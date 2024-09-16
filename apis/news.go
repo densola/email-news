@@ -84,6 +84,8 @@ func GetTLDRContent(n News, subject, date string) (News, error) {
 		utm = "utm_source=tldrwebdev"
 	}
 
+	date = date[0:4] + "-" + date[4:6] + "-" + date[6:8]
+
 	url := "https://tldr.tech/"
 	url += subject + "/" + date
 

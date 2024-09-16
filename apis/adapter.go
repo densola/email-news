@@ -67,20 +67,13 @@ func (na *EmailNews) sqliteConnect() (*sqlx.DB, error) {
 	return db, nil
 }
 
-func (na EmailNews) StoreNews(news News) error {
+func (na EmailNews) StoreNews(news News, date int) error {
 	b, err := json.Marshal(news)
 	if err != nil {
 		return fmt.Errorf("marshaling news: %w", err)
 	}
 
-	dateNow := GetDateNowString()
-	dateNow = dateNow[0:4] + dateNow[5:7] + dateNow[8:10]
-	dbDateNow, err := strconv.Atoi(dateNow)
-	if err != nil {
-		return fmt.Errorf("converting date now string to int: %w", err)
-	}
-
-	err = na.model.insertByte(b, dbDateNow)
+	err = na.model.insertByte(b, date)
 	if err != nil {
 		return fmt.Errorf("inserting news byte and unix now time: %w", err)
 	}

@@ -8,16 +8,17 @@ import (
 	"time"
 )
 
-// getDateNowString returns today's date in the format of YYYY-MM-DD.
+// getDateNowString returns today's date in the format of YYYYMMDD.
+// [0:4] for the year, [4:6] for the month, and [6:8] for the day.
 func GetDateNowString() string {
 	y, m, d := time.Now().Date()
 
-	currentDate := fmt.Sprintf("%d-", y)
+	currentDate := fmt.Sprintf("%d", y)
 
 	if m < 10 {
-		currentDate += fmt.Sprintf("0%d-", m)
+		currentDate += fmt.Sprintf("0%d", m)
 	} else {
-		currentDate += fmt.Sprintf("%d-", m)
+		currentDate += fmt.Sprintf("%d", m)
 	}
 
 	if d < 10 {
