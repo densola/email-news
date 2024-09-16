@@ -3,7 +3,7 @@ module email-news
 go 1.22.3
 
 require (
-	github.com/a-h/templ v0.2.697
+	github.com/a-h/templ v0.2.778
 	github.com/caarlos0/env v3.5.0+incompatible
 	github.com/go-co-op/gocron v1.37.0
 	github.com/gocolly/colly v1.2.0
@@ -30,8 +30,8 @@ require (
 	github.com/stretchr/testify v1.9.0 // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
-	golang.org/x/net v0.25.0 // indirect
-	golang.org/x/text v0.15.0 // indirect
+	golang.org/x/net v0.28.0 // indirect
+	golang.org/x/text v0.17.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/protobuf v1.33.0 // indirect
 )
