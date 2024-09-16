@@ -51,10 +51,6 @@ func scrape() {
 		slog.Warn("Storing news", "err", err.Error())
 	}
 
-	processEmail(n, dateString[0:3], dateString[5:6], dateString[8:9])
-}
-
-func processEmail(n apis.News, year, month, day string) {
 	parser := template.Must(template.New("").Parse(`{{ . }}`))
 
 	formattedMB, err := formatMB(n)
@@ -63,7 +59,7 @@ func processEmail(n apis.News, year, month, day string) {
 		return
 	}
 
-	component := NewsEmail(n, formattedMB, year, month, day) // TODO - actually use YMD in the template.
+	component := NewsEmail(n, formattedMB, dateString[0:3], dateString[5:6], dateString[8:9]) // TODO - actually use YMD in the template.
 
 	html, err := templ.ToGoHTML(context.Background(), component)
 	if err != nil {
@@ -80,5 +76,5 @@ func processEmail(n apis.News, year, month, day string) {
 
 	message := buf.String()
 
-	sendEmail(message)
+	emne.SendEmail(message)
 }
