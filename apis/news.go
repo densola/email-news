@@ -16,11 +16,9 @@ import (
 )
 
 type News struct {
-	HNThreads          HNThreads
-	TLDRTechArticles   []Article
-	TLDRWebDevArticles []Article
-	MBArticles         []Article
-	TLDRWebDevLink     string // TODO - Handle webdev accordingly
+	HNThreads        HNThreads
+	TLDRTechArticles []Article
+	MBArticles       []Article // On web, not on emails.
 }
 
 type Article struct {
@@ -39,11 +37,6 @@ type HNThread struct {
 	Comments string `xml:"comments"`
 }
 
-const (
-	Tech   = "tech"
-	WebDev = "webdev"
-)
-
 func GetContent(date string) (News, error) {
 	var n News
 
@@ -52,14 +45,9 @@ func GetContent(date string) (News, error) {
 		return n, fmt.Errorf("getting hacker news content: %w", err)
 	}
 
-	err = n.getTLDRContent(Tech, date)
+	err = n.getTLDRContent(date)
 	if err != nil {
-		return n, fmt.Errorf("getting tldr tech content: %w", err)
-	}
-
-	err = n.getTLDRContent(WebDev, date)
-	if err != nil {
-		return n, fmt.Errorf("getting tldr webdev content: %w", err)
+		return n, fmt.Errorf("getting tldr content: %w", err)
 	}
 
 	err = n.getMBContent()
@@ -92,23 +80,12 @@ func (n *News) getHNContent() error {
 	return nil
 }
 
-func (n *News) getTLDRContent(subject, date string) error {
-	if subject != Tech && subject != WebDev {
-		return fmt.Errorf("subject %s is invalid", subject)
-	}
+func (n *News) getTLDRContent(date string) error {
+	date = date[0:4] + "-" + date[4:6] + "-" + "20"
 
-	var utm string
-	if subject == Tech {
-		utm = "utm_source=tldrnewsletter"
-	}
-	if subject == WebDev {
-		utm = "utm_source=tldrwebdev"
-	}
+	url := "https://tldr.tech/tech/" + date
 
-	date = date[0:4] + "-" + date[4:6] + "-" + date[6:8]
-
-	url := "https://tldr.tech/"
-	url += subject + "/" + date
+	utm := "utm_source=tldrnewsletter"
 
 	c := colly.NewCollector()
 
@@ -137,12 +114,7 @@ func (n *News) getTLDRContent(subject, date string) error {
 			Overview: o,
 		}
 
-		if subject == Tech {
-			n.TLDRTechArticles = append(n.TLDRTechArticles, article)
-		}
-		if subject == WebDev {
-			n.TLDRWebDevArticles = append(n.TLDRWebDevArticles, article)
-		}
+		n.TLDRTechArticles = append(n.TLDRTechArticles, article)
 	})
 
 	c.Visit(url)
