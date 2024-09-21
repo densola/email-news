@@ -153,11 +153,11 @@ templ NewsEmail(news apis.News, MBArticles []templ.Component, year, month, day s
 			</style>
 		</head>
 		<body>
-			<h1 class="heading">Good morning!</h1>
+			<h1 class="heading">Today on { month } { day }, { year }</h1>
 			<article class="hn">
 				<hgroup>
-					<p>Today's</p>
-					<h1>HN Threads</h1>
+					<p>Threads from</p>
+					<h1>Hacker News</h1>
 				</hgroup>
 				<ul>
 					if len(news.HNThreads.Items) <  1 {
@@ -176,22 +176,18 @@ templ NewsEmail(news apis.News, MBArticles []templ.Component, year, month, day s
 			</article>
 			<article class="tldr-tech">
 				<hgroup>
-					<p>News from</p>
+					<p>Articles from</p>
 					<h1>TLDR Tech</h1>
 				</hgroup>
-				<ul>
-					if len(news.TLDRTechArticles) < 1 {
-						<li>Sorry! No news for today...</li>
-					} else {
-						for _, page := range news.TLDRTechArticles {
-							<li>
-								<a class="tldr-tech__page" href={ templ.SafeURL(page.Link) }>{ page.Title }</a>
-								<ul><li>{ page.Overview }</li></ul>
-							</li>
-						}
+				if len(news.TLDRTechArticles) < 1 {
+					<p>Sorry! No news for today...</p>
+				} else {
+					for _, page := range news.TLDRTechArticles {
+						<h3><a class="tldr-tech__page" href={ templ.SafeURL(page.Link) }>{ page.Title }</a></h3>
+						<p>{ page.Overview }</p>
 					}
-				</ul>
-				<p>Also, check out the TLDR WebDev <a href={ templ.SafeURL(news.TLDRWebDevLink) }>Newsletter</a> and Morning Brew's <a href="https://www.morningbrew.com/daily/issues/latest">latest</a>.</p>
+				}
+				<p>Also, check out Morning Brew's <a href="https://www.morningbrew.com/daily/issues/latest">latest</a>.</p>
 			</article>
 		</body>
 	</html>
