@@ -14,7 +14,8 @@ func main() {
 
 	emne, err = apis.Init()
 	if err != nil {
-		panic("Could not initialize.")
+		slog.Error("Initializing", "err", err)
+		panic("Initializing")
 	}
 
 	go scheduleDailyNews()
@@ -26,7 +27,7 @@ func main() {
 
 	slog.Info("Starting server", "port", emne.Config.Port)
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", emne.Config.Port), router); err != nil {
-		slog.Error("Error while server listening: " + err.Error())
+		slog.Error("Listening and serving", "err", err)
 		return
 	}
 }

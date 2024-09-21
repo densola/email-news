@@ -44,9 +44,11 @@ func Init() (EmailNews, error) {
 	if err != nil && !os.IsNotExist(err) {
 		return emne, fmt.Errorf("loading config file: %w", err)
 	}
+
 	if err := env.Parse(&cfg); err != nil {
 		return emne, fmt.Errorf("parsing config file: %w", err)
 	}
+
 	emne.Config = cfg
 
 	db, err := emne.sqliteConnect()
@@ -75,12 +77,12 @@ func (na *EmailNews) sqliteConnect() (*sqlx.DB, error) {
 func (na EmailNews) StoreNews(news News, date int) error {
 	b, err := json.Marshal(news)
 	if err != nil {
-		return fmt.Errorf("marshaling news: %w", err)
+		return fmt.Errorf("encoding news to json: %w", err)
 	}
 
 	err = na.model.insertByte(b, date)
 	if err != nil {
-		return fmt.Errorf("inserting news byte and unix now time: %w", err)
+		return fmt.Errorf("inserting byte and date: %w", err)
 	}
 
 	return nil
@@ -102,7 +104,7 @@ func (na EmailNews) GetNews(year, month, day string) (News, error) {
 
 	err = json.Unmarshal(b, &n)
 	if err != nil {
-		return n, fmt.Errorf("unmarshaling byte into news variable: %w", err)
+		return n, fmt.Errorf("parsing encoded json news: %w", err)
 	}
 
 	return n, nil
@@ -114,7 +116,7 @@ func (na EmailNews) GetHomeLinks() ([]Hyperlink, error) {
 	var links []Hyperlink
 	times, err := na.model.getTimes()
 	if err != nil {
-		return nil, fmt.Errorf("getting all time values: %w", err)
+		return nil, fmt.Errorf("getting all time values for homepage display: %w", err)
 	}
 
 	for _, tm := range times {

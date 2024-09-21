@@ -18,14 +18,14 @@ import (
 func serveHome(w http.ResponseWriter, r *http.Request) {
 	links, err := emne.GetHomeLinks()
 	if err != nil {
-		slog.Error("Getting dates with news recorded", "err", err.Error())
+		slog.Warn("Getting links for display on homepage", "err", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	err = HomePage(links).Render(r.Context(), w)
 	if err != nil {
-		slog.Error("Rendering home page", "err", err.Error())
+		slog.Warn("Rendering home page", "err", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -35,31 +35,32 @@ func serveDateNews(w http.ResponseWriter, r *http.Request) {
 	year := r.PathValue("year")
 	month := r.PathValue("month")
 	day := r.PathValue("day")
-
-	m, err := strconv.Atoi(month)
-	if err != nil {
-		slog.Warn("Converting month string to int", "err", err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	ymdDate := year + "/" + month + "/" + day
 
 	news, err := emne.GetNews(year, month, day)
 	if err != nil {
-		slog.Error("Getting news based on date", "err", err.Error(), "year", year, "month", month, "day", day)
-		w.WriteHeader(http.StatusInternalServerError)
+		slog.Warn("Getting news based on date", "err", err, "ymd date", ymdDate)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	formattedMB, err := formatMB(news)
 	if err != nil {
-		slog.Warn("Formatting MB data", "err", err.Error())
+		slog.Warn("Preserving line breaks for morning brew paragraphs", "err", err, "ymd date", ymdDate)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	m, err := strconv.Atoi(month)
+	if err != nil {
+		slog.Warn("Getting int from month string", "err", err, "month", month)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	err = NewsOnDatePage(news, formattedMB, year, time.Month(m).String(), day).Render(r.Context(), w)
 	if err != nil {
-		slog.Error("Rendering news page", "err", err.Error())
+		slog.Warn("Rendering news page", "err", err, "ymd date", ymdDate)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -74,7 +75,7 @@ func formatMB(n apis.News) ([]templ.Component, error) {
 			return nil, fmt.Errorf("converting markdown to html: %w", err)
 		}
 
-		// Create a component containing raw HTML.
+		// Create a component containing raw HTML
 		content := raw(buf.String())
 		fmb = append(fmb, content)
 	}

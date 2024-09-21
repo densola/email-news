@@ -85,7 +85,7 @@ func (n *News) getHNContent() error {
 	var threads HNThreads
 	err = xml.Unmarshal(body, &threads)
 	if err != nil {
-		return fmt.Errorf("unmarshaling xml body: %w", err)
+		return fmt.Errorf("parsing xml body: %w", err)
 	}
 	n.HNThreads = threads
 
