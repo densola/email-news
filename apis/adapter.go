@@ -31,6 +31,11 @@ type config struct {
 	MailPort string `env:"MAILPORT"`
 }
 
+type Hyperlink struct {
+	Text        string
+	Destination string
+}
+
 func Init() (EmailNews, error) {
 	emne := EmailNews{}
 	cfg := config{}
