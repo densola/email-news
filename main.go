@@ -17,7 +17,7 @@ func main() {
 		panic("Could not initialize.")
 	}
 
-	go scheduleScrape()
+	go scheduleDailyNews()
 
 	router := http.NewServeMux()
 
