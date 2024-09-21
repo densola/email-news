@@ -52,7 +52,12 @@ func handleDailyNews() {
 		return
 	}
 
-	component := NewsEmail(n, formattedMB, date[0:4], date[4:6], date[6:8]) // TODO - actually use YMD in the template.
+	month, err := parseMonth(date[4:6])
+	if err != nil {
+		slog.Warn("Getting name for month", "err", err, "month", date[4:6])
+	}
+
+	component := NewsEmail(n, formattedMB, date[0:4], month, date[6:8])
 
 	html, err := templ.ToGoHTML(context.Background(), component)
 	if err != nil {

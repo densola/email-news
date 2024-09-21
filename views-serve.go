@@ -51,14 +51,14 @@ func serveDateNews(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	m, err := strconv.Atoi(month)
+	monthName, err := parseMonth(month)
 	if err != nil {
-		slog.Warn("Getting int from month string", "err", err, "month", month)
-		w.WriteHeader(http.StatusInternalServerError)
+		slog.Warn("Getting name for month", "err", err)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	err = NewsOnDatePage(news, formattedMB, year, time.Month(m).String(), day).Render(r.Context(), w)
+	err = NewsOnDatePage(news, formattedMB, year, monthName, day).Render(r.Context(), w)
 	if err != nil {
 		slog.Warn("Rendering news page", "err", err, "ymd date", ymdDate)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -88,4 +88,14 @@ func raw(html string) templ.Component {
 		_, err = io.WriteString(w, html)
 		return
 	})
+}
+
+// parseMonth takes in an integer in string format and returns the month's name
+func parseMonth(month string) (string, error) {
+	m, err := strconv.Atoi(month)
+	if err != nil {
+		return "", fmt.Errorf("converting month string to int: %w", err)
+	}
+
+	return time.Month(m).String(), nil
 }
