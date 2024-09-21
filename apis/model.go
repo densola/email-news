@@ -19,7 +19,7 @@ func newModel(db *sqlx.DB) Model {
 	}
 }
 
-func (m *Model) insertByte(b []byte, time int) error {
+func (m *Model) insertNews(b []byte, time int) error {
 	_, err := m.db.Exec("INSERT INTO NEWS (NEWS, TIME) VALUES (?, ?)", b, time)
 	if err != nil {
 		return fmt.Errorf("inserting news into db: %w", err)
@@ -27,7 +27,7 @@ func (m *Model) insertByte(b []byte, time int) error {
 	return nil
 }
 
-func (m *Model) getByte(time int) ([]byte, error) {
+func (m *Model) getNews(time int) ([]byte, error) {
 	var b []byte
 	err := m.db.Get(&b, "SELECT NEWS FROM NEWS WHERE TIME = ?", time)
 	if err != nil {

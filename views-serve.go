@@ -31,7 +31,7 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func serveDateNews(w http.ResponseWriter, r *http.Request) {
+func serveNews(w http.ResponseWriter, r *http.Request) {
 	year := r.PathValue("year")
 	month := r.PathValue("month")
 	day := r.PathValue("day")
@@ -75,15 +75,14 @@ func formatMB(n apis.News) ([]templ.Component, error) {
 			return nil, fmt.Errorf("converting markdown to html: %w", err)
 		}
 
-		// Create a component containing raw HTML
-		content := raw(buf.String())
+		content := htmlStringToComponent(buf.String())
 		fmb = append(fmb, content)
 	}
 
 	return fmb, nil
 }
 
-func raw(html string) templ.Component {
+func htmlStringToComponent(html string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) (err error) {
 		_, err = io.WriteString(w, html)
 		return

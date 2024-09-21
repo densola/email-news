@@ -40,17 +40,17 @@ type HNThread struct {
 func GetContent(date string) (News, error) {
 	var n News
 
-	err := n.getHNContent()
+	err := n.getHN()
 	if err != nil {
 		return n, fmt.Errorf("getting hacker news content: %w", err)
 	}
 
-	err = n.getTLDRContent(date)
+	err = n.getTLDR(date)
 	if err != nil {
 		return n, fmt.Errorf("getting tldr content: %w", err)
 	}
 
-	err = n.getMBContent()
+	err = n.getMB()
 	if err != nil {
 		return n, fmt.Errorf("getting morning brew content: %w", err)
 	}
@@ -58,7 +58,7 @@ func GetContent(date string) (News, error) {
 	return n, nil
 }
 
-func (n *News) getHNContent() error {
+func (n *News) getHN() error {
 	r, err := http.Get("https://hnrss.org/newest?points=100&comments=25&description=0")
 	if err != nil {
 		return fmt.Errorf("getting rss xml: %w", err)
@@ -80,7 +80,7 @@ func (n *News) getHNContent() error {
 	return nil
 }
 
-func (n *News) getTLDRContent(date string) error {
+func (n *News) getTLDR(date string) error {
 	date = date[0:4] + "-" + date[4:6] + "-" + "20"
 
 	url := "https://tldr.tech/tech/" + date
@@ -122,7 +122,7 @@ func (n *News) getTLDRContent(date string) error {
 	return nil
 }
 
-func (n *News) getMBContent() error {
+func (n *News) getMB() error {
 	// Exclude sunday news
 	if time.Now().Weekday() == time.Weekday(0) {
 		return nil
