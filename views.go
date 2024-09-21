@@ -28,24 +28,27 @@ func handleDailyNews() {
 
 	n, err := apis.GetContent(date)
 	if err != nil {
-		slog.Warn("Getting hacker news content", "error", err.Error())
+		slog.Warn("Getting content for date", "err", err, "date", date)
+		return
 	}
 
 	dbDate, err := strconv.Atoi(date)
 	if err != nil {
-		slog.Warn("Converting date string to int", "err", err.Error())
+		slog.Warn("Converting date string to int", "err", err, "date", date)
+		return
 	}
 
 	err = emne.StoreNews(n, dbDate)
 	if err != nil {
-		slog.Warn("Storing news", "err", err.Error())
+		slog.Warn("Storing news", "err", err)
+		return
 	}
 
 	parser := template.Must(template.New("").Parse(`{{ . }}`))
 
 	formattedMB, err := formatMB(n)
 	if err != nil {
-		slog.Warn("Formatting MB data", "err", err.Error())
+		slog.Warn("Preserving mb line breaks for emails", "err", err)
 		return
 	}
 
@@ -53,14 +56,14 @@ func handleDailyNews() {
 
 	html, err := templ.ToGoHTML(context.Background(), component)
 	if err != nil {
-		slog.Error("Generating html", "err", err.Error())
+		slog.Warn("Generating html from templ component", "err", err)
 		return
 	}
 
 	buf := new(bytes.Buffer)
 	err = parser.Execute(buf, html)
 	if err != nil {
-		slog.Error("Executing template", "err", err.Error())
+		slog.Warn("Applying template to html", "err", err)
 		return
 	}
 
