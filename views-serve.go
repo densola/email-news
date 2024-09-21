@@ -75,14 +75,14 @@ func formatMB(n apis.News) ([]templ.Component, error) {
 		}
 
 		// Create a component containing raw HTML.
-		content := Raw(buf.String())
+		content := raw(buf.String())
 		fmb = append(fmb, content)
 	}
 
 	return fmb, nil
 }
 
-func Raw(html string) templ.Component {
+func raw(html string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) (err error) {
 		_, err = io.WriteString(w, html)
 		return

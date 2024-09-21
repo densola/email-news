@@ -15,15 +15,22 @@ import (
 	"github.com/gocolly/colly"
 )
 
-const (
-	Tech   = "tech"
-	WebDev = "webdev"
-)
+type News struct {
+	HNThreads          HNThreads
+	TLDRTechArticles   []Article
+	TLDRWebDevArticles []Article
+	MBArticles         []Article
+	TLDRWebDevLink     string // TODO - Handle webdev accordingly
+}
 
 type Article struct {
 	Title    string
 	Link     string
 	Overview string
+}
+
+type HNThreads struct {
+	Items []HNThread `xml:"channel>item"`
 }
 
 type HNThread struct {
@@ -32,42 +39,30 @@ type HNThread struct {
 	Comments string `xml:"comments"`
 }
 
-type HNThreads struct {
-	Items []HNThread `xml:"channel>item"`
-}
-
-type News struct {
-	HNThreads          HNThreads
-	TLDRTechArticles   []Article
-	TLDRWebDevArticles []Article
-	MBArticles         []Article
-	TLDRWebDevLink     string // TODO - Make a generator
-}
-
-type Hyperlink struct {
-	Text        string
-	Destination string
-}
+const (
+	Tech   = "tech"
+	WebDev = "webdev"
+)
 
 func GetContent(date string) (News, error) {
 	var n News
 
-	n, err := getHNContent(n)
+	err := n.getHNContent()
 	if err != nil {
 		return n, fmt.Errorf("getting hacker news content: %w", err)
 	}
 
-	n, err = getTLDRContent(n, Tech, date)
+	err = n.getTLDRContent(Tech, date)
 	if err != nil {
 		return n, fmt.Errorf("getting tldr tech content: %w", err)
 	}
 
-	n, err = getTLDRContent(n, WebDev, date)
+	err = n.getTLDRContent(WebDev, date)
 	if err != nil {
 		return n, fmt.Errorf("getting tldr webdev content: %w", err)
 	}
 
-	n, err = getMBContent(n)
+	err = n.getMBContent()
 	if err != nil {
 		return n, fmt.Errorf("getting morning brew content: %w", err)
 	}
@@ -75,31 +70,31 @@ func GetContent(date string) (News, error) {
 	return n, nil
 }
 
-func getHNContent(n News) (News, error) {
+func (n *News) getHNContent() error {
 	r, err := http.Get("https://hnrss.org/newest?points=100&comments=25&description=0")
 	if err != nil {
-		return n, fmt.Errorf("getting rss xml: %w", err)
+		return fmt.Errorf("getting rss xml: %w", err)
 	}
 
 	body, err := io.ReadAll(r.Body)
 	r.Body.Close()
 	if err != nil {
-		return n, fmt.Errorf("reading response body: %w", err)
+		return fmt.Errorf("reading response body: %w", err)
 	}
 
 	var threads HNThreads
 	err = xml.Unmarshal(body, &threads)
 	if err != nil {
-		return n, fmt.Errorf("unmarshaling xml body: %w", err)
+		return fmt.Errorf("unmarshaling xml body: %w", err)
 	}
 	n.HNThreads = threads
 
-	return n, nil
+	return nil
 }
 
-func getTLDRContent(n News, subject, date string) (News, error) {
+func (n *News) getTLDRContent(subject, date string) error {
 	if subject != Tech && subject != WebDev {
-		return n, fmt.Errorf("subject %s is invalid", subject)
+		return fmt.Errorf("subject %s is invalid", subject)
 	}
 
 	var utm string
@@ -152,13 +147,13 @@ func getTLDRContent(n News, subject, date string) (News, error) {
 
 	c.Visit(url)
 
-	return n, nil
+	return nil
 }
 
-func getMBContent(n News) (News, error) {
+func (n *News) getMBContent() error {
 	// Exclude sunday news
 	if time.Now().Weekday() == time.Weekday(0) {
-		return n, nil
+		return nil
 	}
 
 	url := "https://www.morningbrew.com/daily/issues/latest"
@@ -190,5 +185,5 @@ func getMBContent(n News) (News, error) {
 	// Remove the last advertisement card
 	n.MBArticles = n.MBArticles[:len(n.MBArticles)-1]
 
-	return n, nil
+	return nil
 }
