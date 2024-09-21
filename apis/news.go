@@ -49,7 +49,33 @@ type Hyperlink struct {
 	Destination string
 }
 
-func GetHNContent(n News) (News, error) {
+func GetContent(date string) (News, error) {
+	var n News
+
+	n, err := getHNContent(n)
+	if err != nil {
+		return n, fmt.Errorf("getting hacker news content: %w", err)
+	}
+
+	n, err = getTLDRContent(n, Tech, date)
+	if err != nil {
+		return n, fmt.Errorf("getting tldr tech content: %w", err)
+	}
+
+	n, err = getTLDRContent(n, WebDev, date)
+	if err != nil {
+		return n, fmt.Errorf("getting tldr webdev content: %w", err)
+	}
+
+	n, err = getMBContent(n)
+	if err != nil {
+		return n, fmt.Errorf("getting morning brew content: %w", err)
+	}
+
+	return n, nil
+}
+
+func getHNContent(n News) (News, error) {
 	r, err := http.Get("https://hnrss.org/newest?points=100&comments=25&description=0")
 	if err != nil {
 		return n, fmt.Errorf("getting rss xml: %w", err)
@@ -71,7 +97,7 @@ func GetHNContent(n News) (News, error) {
 	return n, nil
 }
 
-func GetTLDRContent(n News, subject, date string) (News, error) {
+func getTLDRContent(n News, subject, date string) (News, error) {
 	if subject != Tech && subject != WebDev {
 		return n, fmt.Errorf("subject %s is invalid", subject)
 	}
@@ -129,7 +155,7 @@ func GetTLDRContent(n News, subject, date string) (News, error) {
 	return n, nil
 }
 
-func GetMBContent(n News) (News, error) {
+func getMBContent(n News) (News, error) {
 	// Exclude sunday news
 	if time.Now().Weekday() == time.Weekday(0) {
 		return n, nil

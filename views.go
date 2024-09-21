@@ -3,52 +3,37 @@ package main
 import (
 	"bytes"
 	"context"
+	"email-news/apis"
+	"html/template"
 	"log/slog"
 	"strconv"
-	"text/template"
 	"time"
-
-	"email-news/apis"
 
 	"github.com/a-h/templ"
 	"github.com/go-co-op/gocron"
 )
 
-func scheduleScrape() {
+func scheduleDailyNews() {
 	s := gocron.NewScheduler(time.UTC)
 
-	s.Every(1).Days().At(emne.Config.Time).Do(scrape)
+	s.Every(1).Days().At(emne.Config.Time).Do(handleDailyNews)
 
 	s.StartAsync()
 }
 
-func scrape() {
+func handleDailyNews() {
 	var n apis.News
 
 	date := apis.GetDateNowString()
-	dbDate, err := strconv.Atoi(date)
-	if err != nil {
-		slog.Warn("Converting date string to int", "err", err.Error())
-	}
 
-	n, err = apis.GetHNContent(n)
+	n, err := apis.GetContent(date)
 	if err != nil {
 		slog.Warn("Getting hacker news content", "error", err.Error())
 	}
 
-	n, err = apis.GetTLDRContent(n, apis.Tech, date)
+	dbDate, err := strconv.Atoi(date)
 	if err != nil {
-		slog.Warn("Getting tldr tech content", "error", err.Error())
-	}
-
-	n, err = apis.GetTLDRContent(n, apis.WebDev, date)
-	if err != nil {
-		slog.Warn("Getting tldr webdev content", "error", err.Error())
-	}
-
-	n, err = apis.GetMBContent(n)
-	if err != nil {
-		slog.Warn("Getting morning brew content", "error", err.Error())
+		slog.Warn("Converting date string to int", "err", err.Error())
 	}
 
 	err = emne.StoreNews(n, dbDate)
