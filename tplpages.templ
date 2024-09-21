@@ -57,20 +57,6 @@ templ NewsOnDatePage(news apis.News, MBArticles []templ.Component, year, month, 
 					}
 				}
 			</ul>
-			<h3>TLDR WebDev</h3>
-			<p>Articles related to web development</p>
-			<ul>
-				if len(news.TLDRWebDevArticles) < 1 {
-					<li>Sorry! No news for today...</li>
-				} else {
-					for _, page := range news.TLDRWebDevArticles {
-						<li>
-							<a href={ templ.SafeURL(page.Link) }>{ page.Title }</a>
-							<ul><li>{ page.Overview }</li></ul>
-						</li>
-					}
-				}
-			</ul>
 			<h3>Morning Brew</h3>
 			<p>Ensures you're somewhat caught up with reality!</p>
 			<ul>

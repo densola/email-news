@@ -2,9 +2,9 @@
 
 ## Features
 
--   Scrapes data from Hacker News, Morning Brew, and TLDR Newsletters
--   Basic web interface for scraped data
--   Daily emails with scraped data
+-   Scrapes data from Hacker News, TLDR, and Morning Brew.
+-   Web interface for all scraped data
+-   Daily emails with Hacker News and TLDR content
 
 ## Running the program
 
