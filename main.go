@@ -12,7 +12,7 @@ var emne apis.EmailNews
 func main() {
 	var err error
 
-	emne, err = apis.Init()
+	emne, err = apis.Initialize()
 	if err != nil {
 		slog.Error("Initializing", "err", err)
 		panic("Initializing")
@@ -23,7 +23,7 @@ func main() {
 	router := http.NewServeMux()
 
 	router.HandleFunc("/", serveHome)
-	router.HandleFunc("/{year}/{month}/{day}", serveDateNews)
+	router.HandleFunc("/{year}/{month}/{day}", serveNews)
 
 	slog.Info("Starting server", "port", emne.Config.Port)
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", emne.Config.Port), router); err != nil {

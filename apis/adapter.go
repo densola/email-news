@@ -36,7 +36,7 @@ type Hyperlink struct {
 	Destination string
 }
 
-func Init() (EmailNews, error) {
+func Initialize() (EmailNews, error) {
 	emne := EmailNews{}
 	cfg := config{}
 
@@ -80,7 +80,7 @@ func (na EmailNews) StoreNews(news News, date int) error {
 		return fmt.Errorf("encoding news to json: %w", err)
 	}
 
-	err = na.model.insertByte(b, date)
+	err = na.model.insertNews(b, date)
 	if err != nil {
 		return fmt.Errorf("inserting byte and date: %w", err)
 	}
@@ -97,7 +97,7 @@ func (na EmailNews) GetNews(year, month, day string) (News, error) {
 		return n, fmt.Errorf("converting date string to int: %w", err)
 	}
 
-	b, err := na.model.getByte(dbDate)
+	b, err := na.model.getNews(dbDate)
 	if err != nil {
 		return n, fmt.Errorf("getting byte based on date: %w", err)
 	}
