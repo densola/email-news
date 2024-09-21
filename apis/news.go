@@ -155,7 +155,9 @@ func (n *News) getMB() error {
 	c.Visit(url)
 
 	// Remove the last advertisement card
-	n.MBArticles = n.MBArticles[:len(n.MBArticles)-1]
+	if len(n.MBArticles) != 0 {
+		n.MBArticles = n.MBArticles[:len(n.MBArticles)-1]
+	}
 
 	return nil
 }
