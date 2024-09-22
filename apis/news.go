@@ -81,7 +81,7 @@ func (n *News) getHN() error {
 }
 
 func (n *News) getTLDR(date string) error {
-	date = date[0:4] + "-" + date[4:6] + "-" + "20"
+	date = date[0:4] + "-" + date[4:6] + "-" + date[6:8]
 
 	url := "https://tldr.tech/tech/" + date
 
