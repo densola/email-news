@@ -7,7 +7,6 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"log/slog"
 	"net/http"
 	"strings"
 	"time"
@@ -85,36 +84,34 @@ func (n *News) getTLDR(date string) error {
 
 	url := "https://tldr.tech/tech/" + date
 
-	utm := "utm_source=tldrnewsletter"
-
 	c := colly.NewCollector()
 
-	c.OnHTML("div.mt-3:not(.text-center)", func(elem *colly.HTMLElement) {
+	c.OnHTML("article.mt-3:not(.text-center)", func(elem *colly.HTMLElement) {
 		t := strings.TrimSpace(elem.ChildText("h3"))
 		l := strings.TrimSpace(elem.ChildAttr("a", "href"))
-		o := strings.TrimSpace(elem.ChildText("div"))
+		o := strings.TrimSpace(elem.ChildText("div.newsletter-html"))
 
 		if t == "" || l == "" || o == "" {
 			return
 		}
 
-		l, success := strings.CutSuffix(l, utm)
-		if !success {
-			slog.Warn("Could not cut link", "link", l)
-		}
+		l = strings.ReplaceAll(l, "utm_source=tldrnewsletter", "")
 
 		// Remove the "?" at the end of the URL for aesthetic purposes
 		if l[len(l)-1:] == "?" {
 			l = l[:len(l)-1]
 		}
 
-		article := Article{
-			Title:    t,
-			Link:     l,
-			Overview: o,
+		if !strings.Contains(t, "(Sponsor)") {
+			article := Article{
+				Title:    t,
+				Link:     l,
+				Overview: o,
+			}
+
+			n.TLDRTechArticles = append(n.TLDRTechArticles, article)
 		}
 
-		n.TLDRTechArticles = append(n.TLDRTechArticles, article)
 	})
 
 	c.Visit(url)
