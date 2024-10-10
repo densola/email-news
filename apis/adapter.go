@@ -22,13 +22,15 @@ type EmailNews struct {
 }
 
 type config struct {
-	Port     int    `env:"PORT"`
-	Time     string `env:"TIME"`
-	MailFrom string `env:"MAILFROM"`
-	MailTo   string `env:"MAILTO"`
-	MailPass string `env:"MAILPASS"`
-	MailHost string `env:"MAILHOST"`
-	MailPort string `env:"MAILPORT"`
+	Port               int    `env:"PORT"`
+	Time               string `env:"TIME"`
+	MailFrom           string `env:"MAILFROM"`
+	MailTo             string `env:"MAILTO"`
+	MailPass           string `env:"MAILPASS"`
+	MailHost           string `env:"MAILHOST"`
+	MailPort           string `env:"MAILPORT"`
+	WeatherAPIKey      string `env:"WEATHERAPIKEY"`
+	WeatherAPILocation string `env:"WEATHERAPILOCATION"`
 }
 
 type Hyperlink struct {

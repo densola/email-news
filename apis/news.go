@@ -15,22 +15,23 @@ import (
 )
 
 type News struct {
-	HNThreads        HNThreads
-	TLDRTechArticles []Article
-	MBArticles       []Article // On web, not on emails.
+	Weather          WeatherResponse
+	HNThreads        hnThreads
+	TLDRTechArticles []article
+	MBArticles       []article // On web, not on emails.
 }
 
-type Article struct {
+type article struct {
 	Title    string
 	Link     string
 	Overview string
 }
 
-type HNThreads struct {
-	Items []HNThread `xml:"channel>item"`
+type hnThreads struct {
+	Items []hnThread `xml:"channel>item"`
 }
 
-type HNThread struct {
+type hnThread struct {
 	Title    string `xml:"title"`
 	Link     string `xml:"link"`
 	Comments string `xml:"comments"`
@@ -69,7 +70,7 @@ func (n *News) getHN() error {
 		return fmt.Errorf("reading response body: %w", err)
 	}
 
-	var threads HNThreads
+	var threads hnThreads
 	err = xml.Unmarshal(body, &threads)
 	if err != nil {
 		return fmt.Errorf("parsing xml body: %w", err)
@@ -103,7 +104,7 @@ func (n *News) getTLDR(date string) error {
 		}
 
 		if !strings.Contains(t, "(Sponsor)") {
-			article := Article{
+			article := article{
 				Title:    t,
 				Link:     l,
 				Overview: o,
@@ -134,14 +135,14 @@ func (n *News) getMB() error {
 
 		if len(t) != 0 && len(o) == 0 {
 			o = elem.ChildText("td.card-content")
-			article := Article{
+			article := article{
 				Title: t,
 				// No links needed
 				Overview: o,
 			}
 			n.MBArticles = append(n.MBArticles, article)
 		} else if len(t) != 0 {
-			article := Article{
+			article := article{
 				Title:    t,
 				Overview: o,
 			}
