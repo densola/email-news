@@ -26,7 +26,7 @@ func handleDailyNews() {
 
 	date := apis.GetDateNowString()
 
-	n, err := apis.GetContent(date)
+	n, err := apis.GetContent(emne.Config.WeatherAPIKey, emne.Config.WeatherAPILocation, date)
 	if err != nil {
 		slog.Warn("Getting content for date", "err", err, "date", date)
 		return
