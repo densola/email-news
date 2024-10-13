@@ -108,6 +108,10 @@ templ NewsEmail(news apis.News, MBArticles []templ.Component, year, month, day s
 					font-weight: bold;
 				}
 
+				hgroup>p {
+					padding-top: 1rem;
+				}
+
 				hgroup>* {
 					margin: 0px;
 					padding: 0px;
@@ -151,7 +155,18 @@ templ NewsEmail(news apis.News, MBArticles []templ.Component, year, month, day s
 			</style>
 		</head>
 		<body>
-			<h1 class="heading">Today on { month } { day }, { year }</h1>
+			<article>
+				<hgroup>
+					<p>For { month } { day }, { year }</p>
+					<h1>Weather</h1>
+				</hgroup>
+				<ul>
+					<li>Condition: { news.Weather.Forecast.ForecastDay[0].Day.Condition.Text }</li>
+					<li>Min temp: { fmt.Sprintf("%.0f", news.Weather.Forecast.ForecastDay[0].Day.MinTempC) }&#176;C / { fmt.Sprintf("%.0f", news.Weather.Forecast.ForecastDay[0].Day.MinTempF) }&#176;F</li>
+					<li>Max temp: { fmt.Sprintf("%.0f", news.Weather.Forecast.ForecastDay[0].Day.MaxTempC) }&#176;C / { fmt.Sprintf("%.0f", news.Weather.Forecast.ForecastDay[0].Day.MaxTempF) }&#176;F</li>
+					<li>Chance of Rain: { fmt.Sprintf("%.0f", news.Weather.Forecast.ForecastDay[0].Day.DailyChanceOfRain) }%</li>
+				</ul>
+			</article>
 			<article class="hn">
 				<hgroup>
 					<p>Threads from</p>

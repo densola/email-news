@@ -49,6 +49,7 @@ func (n *News) getWeather(apiKey, location string) error {
 	if err != nil {
 		return fmt.Errorf("parsing json body: %w", err)
 	}
+	n.Weather = w
 
 	return nil
 }
