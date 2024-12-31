@@ -51,8 +51,8 @@ MAILPORT="123"
 
 ### Set up: Go and templ
 
-1. Install Go from https://go.dev/doc/install
-2. Install templ from https://templ.guide/quick-start/installation
+1. Install [Go](https://go.dev/doc/install)
+2. Install [templ](https://templ.guide/quick-start/installation)
 3. Open a terminal, then...
     1. cd into this repo's root
     2. Run `templ generate`
@@ -60,6 +60,14 @@ MAILPORT="123"
 
 After this, the program should be running locally at the specified port.
 
-## Building and deploying the program
+## Deploying
 
-TODO...
+1. Install [make](https://www.gnu.org/software/make)
+2. Install [ansible](https://www.ansible.com/)
+3. Adjust values in ansible/ directory
+    1. remote_user value in ansible.cfg
+    2. "host" and "user" in inventory.ini
+    3. port value in roles/emne/tasks/main.yml
+4. Run `make deploy`
+
+The expected target host is a Linux OS on amd64 architecture.

@@ -11,7 +11,7 @@ run: tgen
 	go run .
 
 build: tgen
-	go build -o $(emneBin)
+	GOOS=linux GOARCH=amd64 go build -o $(emneBin)
 
 deploy: build
 	cp $(emneBin) $(ansibleFilesPath)
